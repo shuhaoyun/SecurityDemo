@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ysh.Mapper.userMapper">
+        <resultMap id="userMap" type="com.ysh.Pojo.User">
+            <id property="id" column="id"/>
+            <result property="username" column="userName"/>
+            <result property="password" column="passWord"/>
+            <result property="statu" column="statu"/>
+            <collection property="prem" ofType="String">
+                <result column="prem"></result>
+            </collection>
+        </resultMap>
+        <select id="findUser" resultMap="userMap" parameterType="String">
+            select `user`.id,`user`.userName,`user`.`passWord`,`user`.statu,menu.prem
+            from user
+            left join user_role ur ON user.id=ur.UID
+            LEFT JOIN role_menu rm ON ur.RID=rm.Rid
+            LEFT JOIN menu ON menu.M_Id=rm.Mid
+            <where>
+                user.userName=#{username}
+            </where>
+
+        </select>
+    <select id="findUserById" resultMap="userMap" parameterType="int">
+        select `user`.id,`user`.userName,`user`.`passWord`,`user`.statu,menu.prem
+        from user
+        left join user_role ur ON user.id=ur.UID
+        LEFT JOIN role_menu rm ON ur.RID=rm.Rid
+        LEFT JOIN menu ON menu.M_Id=rm.Mid
+        <where>
+            user.id=#{id}
+        </where>
+
+    </select>
+    <update id="loginOut" parameterType="int">
+        UPDATE user SET statu=0 WHERE id=#{id}
+    </update>
+    <update id="loginInter" parameterType="int">
+        UPDATE user SET statu=1 WHERE id=#{id}
+    </update>
+    <insert id="userInsert" parameterType="com.ysh.Pojo.User">
+        INSERT INTO `user` (`username`,`passWord`,`statu`) VALUES (#{username},#{password},0)
+    </insert>
+    <insert id="updateUser" parameterType="int">
+        INSERT into user_role VALUES(#{id},2)
+    </insert>
+</mapper>
